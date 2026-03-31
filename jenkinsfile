@@ -5,21 +5,22 @@ pipeline {
 
         stage('Build') {
             steps {
-                bat 'docker pull node:18-alpine'
-
                 bat '''
+                docker pull node:18-alpine
+
                 docker run --rm ^
+                -u 0 ^
                 -v "%cd%":/app ^
                 -w /app ^
                 node:18-alpine ^
-                sh -c "ls -lrt && node --version && npm --version && npm ci && npm run build && ls -lrt"
+                sh -c "npm ci && npm run build"
                 '''
             }
         }
 
         stage('Test') {
             steps {
-                bat 'if exist build\\index.html (echo File exists) else (exit 1)'
+                bat 'if exist build\\index.html (echo Build Success) else (exit 1)'
             }
         }
     }
